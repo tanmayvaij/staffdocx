@@ -380,8 +380,6 @@ class MainWindow(QMainWindow):
         csv_path = get_setting("csv_path")
         if csv_path and os.path.exists(csv_path):
             self.load_csv(csv_path)
-        else:
-            self.prompt_for_csv()
 
     def prompt_for_csv(self):
         file_path, _ = QFileDialog.getOpenFileName(

@@ -1,0 +1,36 @@
+name: Build Windows Executable
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch: # Allows you to manually trigger the build from the Actions tab
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Install the uv package manager
+      uses: astral-sh/setup-uv@v3
+      with:
+        enable-cache: true
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11" # Using a stable, widely supported version for the build
+
+    - name: Install dependencies
+      run: uv sync
+
+    - name: Build Executable with PyInstaller
+      run: uv run pyinstaller --name "StaffDocx" --noconsole --onefile --windowed --add-data "assets;assets" --icon="assets/app_icon.png" main.py
+
+    - name: Upload Executable Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: StaffDocx-Windows-EXE
+        path: dist/StaffDocx.exe

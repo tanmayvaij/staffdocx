@@ -39,28 +39,20 @@ class PDFService:
 
         elements = []
 
-        # Header (Logo + Title)
-        title_content = [
-            Paragraph("Sadhu Vaswani International School, Moshi Pradhikaran", center_style),
-            Paragraph("CONFIDENTIAL REPORT", sub_title_style)
-        ]
-
+        # Logo
         if logo_path and os.path.exists(logo_path):
             try:
-                # Reduced size: 0.8 inch
-                img = Image(logo_path, width=0.8*inch, height=0.8*inch)
-                
-                header_table = Table([[img, title_content]], colWidths=[1.2*inch, 5.8*inch])
-                header_table.setStyle(TableStyle([
-                    ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
-                    ('ALIGN', (0,0), (0,0), 'RIGHT'),
-                    ('ALIGN', (1,0), (1,0), 'CENTER'),
-                ]))
-                elements.append(header_table)
+                # 1.0 inch size so it still fits nicely on one page
+                img = Image(logo_path, width=1.0*inch, height=1.0*inch)
+                img.hAlign = 'CENTER'
+                elements.append(img)
+                elements.append(Spacer(1, 5))
             except Exception:
-                elements.extend(title_content)
-        else:
-            elements.extend(title_content)
+                pass
+
+        # Title and Subtitle
+        elements.append(Paragraph("Sadhu Vaswani International School, Moshi Pradhikaran", center_style))
+        elements.append(Paragraph("CONFIDENTIAL REPORT", sub_title_style))
             
         elements.append(Spacer(1, 10))
         
