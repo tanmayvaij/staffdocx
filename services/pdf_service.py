@@ -20,38 +20,49 @@ class PDFService:
 
         doc = SimpleDocTemplate(filepath, pagesize=letter,
                                 rightMargin=50, leftMargin=50,
-                                topMargin=50, bottomMargin=50)
+                                topMargin=36, bottomMargin=36)
         
         styles = getSampleStyleSheet()
         
         center_style = ParagraphStyle(
-            'CenterTitle', parent=styles['Normal'], alignment=1, fontSize=14, spaceAfter=10, fontName="Helvetica-Bold"
+            'CenterTitle', parent=styles['Normal'], alignment=1, fontSize=13, spaceAfter=6, fontName="Helvetica-Bold"
         )
         sub_title_style = ParagraphStyle(
-            'SubTitle', parent=styles['Normal'], alignment=1, fontSize=12, spaceAfter=20, fontName="Helvetica-Bold"
+            'SubTitle', parent=styles['Normal'], alignment=1, fontSize=11, spaceAfter=10, fontName="Helvetica-Bold"
         )
         question_style = ParagraphStyle(
-            'Question', parent=styles['Normal'], fontSize=11, spaceAfter=6, fontName="Helvetica-Bold"
+            'Question', parent=styles['Normal'], fontSize=10, spaceAfter=3, fontName="Helvetica-Bold"
         )
         answer_style = ParagraphStyle(
-            'Answer', parent=styles['Normal'], fontSize=11, spaceAfter=15, textColor=colors.HexColor("#333333")
+            'Answer', parent=styles['Normal'], fontSize=10, spaceAfter=8, textColor=colors.HexColor("#333333")
         )
 
         elements = []
 
-        # Logo
+        # Header (Logo + Title)
+        title_content = [
+            Paragraph("Sadhu Vaswani International School, Moshi Pradhikaran", center_style),
+            Paragraph("CONFIDENTIAL REPORT", sub_title_style)
+        ]
+
         if logo_path and os.path.exists(logo_path):
             try:
-                img = Image(logo_path, width=1.2*inch, height=1.2*inch)
-                img.hAlign = 'CENTER'
-                elements.append(img)
-                elements.append(Spacer(1, 10))
+                # Reduced size: 0.8 inch
+                img = Image(logo_path, width=0.8*inch, height=0.8*inch)
+                
+                header_table = Table([[img, title_content]], colWidths=[1.2*inch, 5.8*inch])
+                header_table.setStyle(TableStyle([
+                    ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
+                    ('ALIGN', (0,0), (0,0), 'RIGHT'),
+                    ('ALIGN', (1,0), (1,0), 'CENTER'),
+                ]))
+                elements.append(header_table)
             except Exception:
-                pass
-
-        # Title
-        elements.append(Paragraph("Sadhu Vaswani International School, Moshi Pradhikaran", center_style))
-        elements.append(Paragraph("CONFIDENTIAL REPORT", sub_title_style))
+                elements.extend(title_content)
+        else:
+            elements.extend(title_content)
+            
+        elements.append(Spacer(1, 10))
         
         # 1. Name
         elements.append(Paragraph("1. Name of applicant", question_style))
@@ -89,22 +100,26 @@ class PDFService:
             ('BOX', (0,0), (-1,-1), 0.25, colors.black),
             ('ALIGN', (1,0), (1,-1), 'CENTER'),
             ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
-            ('TOPPADDING', (0,0), (-1,-1), 6),
-            ('BOTTOMPADDING', (0,0), (-1,-1), 6),
+            ('TOPPADDING', (0,0), (-1,-1), 4),
+            ('BOTTOMPADDING', (0,0), (-1,-1), 4),
         ]))
         elements.append(rating_table)
-        elements.append(Spacer(1, 15))
+        elements.append(Spacer(1, 10))
         
         # 6. Comments
-        elements.append(Paragraph("Any other comments, or factors you may wish to bring to our attention:", question_style))
-        elements.append(Paragraph(document_data.get("Comments", "") or "None", answer_style))
+        comments = document_data.get("Comments", "").strip()
+        if comments:
+            elements.append(Paragraph("Any other comments, or factors you may wish to bring to our attention:", question_style))
+            elements.append(Paragraph(comments, answer_style))
         
         # 7. Achievements
-        elements.append(Paragraph("Special achievements of the applicant – medals, prizes, etc:", question_style))
-        elements.append(Paragraph(document_data.get("Achievements", "") or "None", answer_style))
+        achievements = document_data.get("Achievements", "").strip()
+        if achievements:
+            elements.append(Paragraph("Special achievements of the applicant – medals, prizes, etc:", question_style))
+            elements.append(Paragraph(achievements, answer_style))
         
         # 8. Signature & Date
-        elements.append(Spacer(1, 40))
+        elements.append(Spacer(1, 20))
         sig_data = [["_______________________", "_______________________"],
                     ["Signature of Principal", f"Date: {document_data.get('Generated_DateTime', '')}"]]
         sig_table = Table(sig_data, colWidths=[3.5*inch, 3.5*inch])

@@ -78,7 +78,7 @@ class MainWindow(QMainWindow):
         # Main Content Area
         content_widget = QWidget()
         content_layout = QVBoxLayout(content_widget)
-        content_layout.setContentsMargins(40, 30, 40, 30)
+        content_layout.setContentsMargins(0, 0, 0, 0)
         
         # Splitter for left (search) and right (details) panels
         splitter = QSplitter(Qt.Horizontal)
@@ -91,12 +91,6 @@ class MainWindow(QMainWindow):
         left_layout = QVBoxLayout(left_panel)
         left_layout.setContentsMargins(20, 24, 20, 24)
         left_layout.setSpacing(15)
-        
-        shadow1 = QGraphicsDropShadowEffect()
-        shadow1.setBlurRadius(20)
-        shadow1.setColor(QColor(0, 0, 0, 10))
-        shadow1.setOffset(0, 4)
-        left_panel.setGraphicsEffect(shadow1)
         
         search_label = QLabel("Search Employee")
         search_label.setFont(QFont("Arial", 12, QFont.Bold))
@@ -113,17 +107,11 @@ class MainWindow(QMainWindow):
         
         splitter.addWidget(left_panel)
 
-        # Right Panel (Details & Generation)
+        # Right Panel (Details)
         right_panel = QWidget()
         right_panel.setObjectName("cardPanel")
         right_layout = QVBoxLayout(right_panel)
         right_layout.setContentsMargins(0, 0, 0, 0)
-        
-        shadow2 = QGraphicsDropShadowEffect()
-        shadow2.setBlurRadius(20)
-        shadow2.setColor(QColor(0, 0, 0, 10))
-        shadow2.setOffset(0, 4)
-        right_panel.setGraphicsEffect(shadow2)
 
         # Scroll Area for Right Panel content
         scroll_area = QScrollArea()
@@ -288,8 +276,9 @@ class MainWindow(QMainWindow):
         }
         #cardPanel {
             background-color: #ffffff;
-            border-radius: 12px;
-            border: 1px solid #f1f5f9;
+            border: 1px solid #e2e8f0;
+            border-top: none;
+            border-bottom: none;
         }
         QSplitter::handle {
             background: transparent;
